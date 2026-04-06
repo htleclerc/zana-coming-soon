@@ -75,14 +75,42 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Only serve GET /
   if (req.method !== 'GET') {
     res.writeHead(405, { 'Content-Type': 'text/plain' });
     res.end('Method Not Allowed');
     return;
   }
 
-  fs.readFile(indexPath, 'utf8', (err, html) => {
+  // Serve static assets
+  if (req.url === '/favicon.svg') {
+    const faviconPath = path.join(__dirname, 'favicon.svg');
+    fs.readFile(faviconPath, (err, data) => {
+      if (err) { res.writeHead(404); res.end(); return; }
+      res.writeHead(200, { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400' });
+      res.end(data);
+    });
+    return;
+  }
+
+  if (req.url === '/og-image.png') {
+    const ogPath = path.join(__dirname, 'og-image.png');
+    fs.readFile(ogPath, (err, data) => {
+      if (err) { res.writeHead(404); res.end(); return; }
+      res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' });
+      res.end(data);
+    });
+    return;
+  }
+
+  const routes = {
+    '/': indexPath,
+    '/privacy': path.join(__dirname, 'privacy.html'),
+    '/terms': path.join(__dirname, 'terms.html'),
+  };
+
+  const filePath = routes[req.url] || routes['/'];
+
+  fs.readFile(filePath, 'utf8', (err, html) => {
     if (err) {
       res.writeHead(500);
       res.end('Error loading page');
