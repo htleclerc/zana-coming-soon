@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zana — Rwanda's First Logistics Operating System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" async></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #006B3C;
+    --green-dark: #0E4226;
+    --green-electric: #00C462;
+    --green-electric-mid: #4EDA8C;
+    --green-100: #A8F0CC;
+    --green-50: #EDFAF4;
+    --ink: #0A1628;
+    --ink-2: #1C2D3E;
+    --neutral-500: #6B7E8C;
+    --neutral-400: #8FA0AF;
+    --neutral-300: #B8C5CF;
+    --neutral-200: #D4DEE5;
+    --white: #FFFFFF;
+    --amber: #D97706;
+    --display: 'Cormorant Garamond', serif;
+    --ui: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--ui);
+    background: var(--ink);
+    color: var(--white);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,196,98,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,196,98,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,196,98,0.1);
+    transition: all 0.3s;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .z-mark {
+    width: 36px;
+    height: 36px;
+    position: relative;
+  }
+
+  .nav-wordmark {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--white);
+  }
+
+  .nav-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--green-electric);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    color: var(--neutral-400);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--white); }
+
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-family: var(--ui);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    text-decoration: none;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--green-electric);
+    color: var(--ink);
+  }
+  .btn-primary:hover {
+    background: var(--green-electric-mid);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 0 24px rgba(0,196,98,0.35);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--white);
+    border: 1.5px solid rgba(255,255,255,0.15);
+  }
+  .btn-ghost:hover {
+    border-color: var(--green-electric);
+    color: var(--green-electric);
+  }
+
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 24px 80px;
+    text-align: center;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(0,196,98,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,196,98,0.3);
+    background: rgba(0,196,98,0.07);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--green-electric);
+    margin-bottom: 40px;
+    animation: fadeInDown 0.8s ease both;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green-electric);
+    animation: pulse 1.8s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .hero-headline {
+    font-family: var(--display);
+    font-size: clamp(54px, 8vw, 110px);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -3px;
+    color: var(--white);
+    margin-bottom: 12px;
+    animation: fadeInUp 0.9s ease 0.1s both;
+    max-width: 960px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--green-electric);
+  }
+
+  .hero-sub-headline {
+    font-family: var(--display);
+    font-size: clamp(30px, 4vw, 56px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--neutral-400);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.9s ease 0.2s both;
+  }
+
+  .hero-body {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--neutral-400);
+    max-width: 540px;
+    margin: 0 auto 56px;
+    font-weight: 300;
+    animation: fadeInUp 0.9s ease 0.3s both;
+  }
+
+  .hero-body strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .waitlist-wrap {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    animation: fadeInUp 0.9s ease 0.4s both;
+  }
+
+  .waitlist-form {
+    display: flex;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(0,196,98,0.25);
+    border-radius: 999px;
+    padding: 6px 6px 6px 20px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .waitlist-form:focus-within {
+    border-color: var(--green-electric);
+    box-shadow: 0 0 0 4px rgba(0,196,98,0.1);
+  }
+
+  .waitlist-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: var(--ui);
+    font-size: 14px;
+    color: var(--white);
+    min-width: 0;
+  }
+
+  .waitlist-input::placeholder { color: var(--neutral-500); }
+
+  /* Override browser autofill styles */
+  .waitlist-input:-webkit-autofill,
+  .waitlist-input:-webkit-autofill:hover,
+  .waitlist-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--white);
+    -webkit-box-shadow: 0 0 0 1000px rgba(10,22,40,0) inset;
+    transition: background-color 5000s ease-in-out 0s;
+    font-family: var(--ui);
+    font-size: 14px;
+  }
+
+  .waitlist-btn {
+    flex-shrink: 0;
+    padding: 11px 24px;
+    border-radius: 999px;
+    background: var(--green-electric);
+    color: var(--ink);
+    font-family: var(--ui);
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    letter-spacing: -0.2px;
+  }
+
+  .waitlist-btn:hover:not(:disabled) {
+    background: #1fd970;
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(0,196,98,0.4);
+  }
+
+  .waitlist-btn:disabled,
+  .cta-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .waitlist-meta {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--neutral-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .waitlist-meta span { display: flex; align-items: center; gap: 5px; }
+
+  .waitlist-count {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--green-electric);
+    font-weight: 500;
+  }
+
+  .success-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 32px;
+    background: rgba(0,107,60,0.12);
+    border: 1px solid rgba(0,196,98,0.3);
+    border-radius: 20px;
+  }
+
+  .success-state .success-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0,196,98,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .success-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green-electric);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .proof-strip {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    padding: 28px 48px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.02);
+    flex-wrap: wrap;
+  }
+
+  .proof-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .proof-number {
+    font-family: var(--display);
+    font-size: 38px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .proof-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--neutral-500);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .proof-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  section { position: relative; z-index: 1; }
+
+  .section-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green-electric);
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .section-problem {
+    padding: 120px 0;
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .problem-left h2 {
+    font-family: var(--display);
+    font-size: clamp(38px, 4vw, 60px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .problem-left h2 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .problem-left p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--neutral-400);
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  .problem-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .problem-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    transition: all 0.25s;
+  }
+
+  .problem-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(217,119,6,0.25);
+    transform: translateX(4px);
+  }
+
+  .problem-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(217,119,6,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .problem-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .problem-card p {
+    font-size: 13px;
+    color: var(--neutral-500);
+    line-height: 1.5;
+  }
+
+  .section-belief {
+    padding: 120px 0;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .belief-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,107,60,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .belief-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: rgba(0,196,98,0.1);
+    border: 1px solid rgba(0,196,98,0.2);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: var(--green-electric);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .belief-headline {
+    font-family: var(--display);
+    font-size: clamp(42px, 5.5vw, 80px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -2px;
+    color: var(--white);
+    max-width: 900px;
+    margin: 0 auto 32px;
+  }
+
+  .belief-headline em {
+    font-style: italic;
+    color: var(--green-electric);
+  }
+
+  .belief-body {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--neutral-400);
+    max-width: 640px;
+    margin: 0 auto 60px;
+    font-weight: 300;
+  }
+
+  .belief-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .pillar {
+    padding: 36px 28px;
+    background: rgba(10,22,40,0.9);
+    text-align: left;
+    transition: background 0.25s;
+  }
+
+  .pillar:hover { background: rgba(0,107,60,0.08); }
+
+  .pillar-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green-electric);
+    letter-spacing: 2px;
+    opacity: 0.6;
+    margin-bottom: 16px;
+  }
+
+  .pillar h3 {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+
+  .pillar p {
+    font-size: 13px;
+    color: var(--neutral-500);
+    line-height: 1.6;
+  }
+
+  .section-preview {
+    padding: 120px 0;
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 60px;
+    gap: 40px;
+  }
+
+  .preview-header h2 {
+    font-family: var(--display);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    color: var(--white);
+    max-width: 500px;
+  }
+
+  .preview-header h2 em {
+    font-style: italic;
+    color: var(--green-electric);
+  }
+
+  .preview-header p {
+    font-size: 15px;
+    color: var(--neutral-500);
+    line-height: 1.6;
+    max-width: 320px;
+    font-weight: 300;
+  }
+
+  .app-showcase {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(0,196,98,0.15);
+    background: var(--ink-2);
+  }
+
+  .app-blur-overlay {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 40%,
+      rgba(10,22,40,0.7) 65%,
+      rgba(10,22,40,0.97) 80%,
+      var(--ink) 100%
+    );
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 48px;
+    text-align: center;
+  }
+
+  .unlock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(0,196,98,0.12);
+    border: 1px solid rgba(0,196,98,0.3);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-electric);
+    margin-bottom: 16px;
+  }
+
+  .unlock-text {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .mock-dashboard {
+    padding: 24px;
+    min-height: 480px;
+  }
+
+  .mock-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .mock-logo-sm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .mock-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green-electric);
+  }
+
+  .mock-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .mock-kpi {
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+  }
+
+  .mock-kpi-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--neutral-500);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .mock-kpi-value {
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .mock-kpi-value.green { color: var(--green-electric); }
+
+  .mock-map {
+    height: 220px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mock-map-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,196,98,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,196,98,0.07) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .map-ping {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--green-electric);
+  }
+  .map-ping::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid var(--green-electric);
+    animation: mapPing 2s infinite;
+    opacity: 0;
+  }
+
+  @keyframes mapPing {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  .section-how {
+    padding: 120px 0;
+  }
+
+  .how-header {
+    text-align: center;
+    margin-bottom: 72px;
+  }
+
+  .how-header h2 {
+    font-family: var(--display);
+    font-size: clamp(38px, 4vw, 60px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .how-header p {
+    font-size: 16px;
+    color: var(--neutral-500);
+    max-width: 440px;
+    margin: 0 auto;
+    font-weight: 300;
+    line-height: 1.65;
+  }
+
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .how-step {
+    padding: 48px 36px;
+    background: var(--ink);
+    position: relative;
+    transition: background 0.25s;
+  }
+
+  .how-step:hover { background: rgba(0,107,60,0.06); }
+
+  .step-num {
+    font-family: var(--display);
+    font-size: 72px;
+    font-weight: 300;
+    color: rgba(0,196,98,0.12);
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -3px;
+  }
+
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(0,107,60,0.15);
+    border: 1px solid rgba(0,196,98,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .how-step h3 {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.3px;
+    margin-bottom: 12px;
+  }
+
+  .how-step p {
+    font-size: 14px;
+    color: var(--neutral-500);
+    line-height: 1.65;
+  }
+
+  .section-who {
+    padding: 120px 0;
+  }
+
+  .who-header {
+    margin-bottom: 60px;
+  }
+
+  .who-header h2 {
+    font-family: var(--display);
+    font-size: clamp(38px, 4vw, 60px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .who-header p {
+    font-size: 16px;
+    color: var(--neutral-500);
+    max-width: 480px;
+    font-weight: 300;
+    line-height: 1.65;
+  }
+
+  .who-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .who-card {
+    padding: 32px 28px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    transition: all 0.25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .who-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--green-electric);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s;
+  }
+
+  .who-card:hover {
+    background: rgba(0,107,60,0.06);
+    border-color: rgba(0,196,98,0.2);
+    transform: translateY(-4px);
+  }
+
+  .who-card:hover::before { transform: scaleX(1); }
+
+  .who-avatar {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .who-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .who-card p {
+    font-size: 13px;
+    color: var(--neutral-500);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .who-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0,196,98,0.1);
+    border: 1px solid rgba(0,196,98,0.2);
+    font-size: 11px;
+    color: var(--green-electric);
+    font-weight: 500;
+  }
+
+  .section-testimony {
+    padding: 120px 0;
+  }
+
+  .testimony-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .testimony-header h2 {
+    font-family: var(--display);
+    font-size: clamp(36px, 3.5vw, 52px);
+    font-weight: 300;
+    letter-spacing: -1.2px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .testimony-header p {
+    font-size: 15px;
+    color: var(--neutral-500);
+    font-weight: 300;
+  }
+
+  .testimony-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .testimony-card {
+    padding: 32px 28px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    transition: all 0.25s;
+  }
+
+  .testimony-card:hover {
+    background: rgba(0,107,60,0.06);
+    border-color: rgba(0,196,98,0.15);
+  }
+
+  .testimony-stars {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 16px;
+    color: var(--amber);
+    font-size: 13px;
+  }
+
+  .testimony-text {
+    font-family: var(--display);
+    font-size: 19px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.4;
+    margin-bottom: 24px;
+    letter-spacing: -0.2px;
+  }
+
+  .testimony-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .author-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(0,107,60,0.2);
+    border: 1px solid rgba(0,196,98,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green-electric);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .author-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .author-role {
+    font-size: 11px;
+    color: var(--neutral-500);
+    margin-top: 2px;
+  }
+
+  .section-faq {
+    padding: 120px 0;
+  }
+
+  .faq-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .faq-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .faq-header h2 {
+    font-family: var(--display);
+    font-size: clamp(36px, 3.5vw, 52px);
+    font-weight: 300;
+    letter-spacing: -1.2px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 22px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--ui);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--white);
+    transition: color 0.2s;
+  }
+
+  .faq-q:hover { color: var(--green-electric); }
+
+  .faq-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: var(--neutral-400);
+    transition: all 0.3s;
+    line-height: 1;
+  }
+
+  .faq-item.open .faq-icon {
+    border-color: var(--green-electric);
+    color: var(--green-electric);
+    transform: rotate(45deg);
+  }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+  }
+
+  .faq-item.open .faq-a { max-height: 300px; }
+
+  .faq-a-inner {
+    padding-bottom: 22px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--neutral-400);
+    font-weight: 300;
+  }
+
+  .faq-a-inner strong { color: var(--white); font-weight: 500; }
+
+  .section-cta {
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(0,107,60,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-box {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 72px 80px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(0,196,98,0.2);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green-electric), transparent);
+    opacity: 0.6;
+  }
+
+  .cta-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green-electric);
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+
+  .cta-headline {
+    font-family: var(--display);
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -2px;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .cta-headline em {
+    font-style: italic;
+    color: var(--green-electric);
+  }
+
+  .cta-sub {
+    font-size: 16px;
+    color: var(--neutral-500);
+    margin-bottom: 40px;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  .cta-countdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 36px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--neutral-500);
+  }
+
+  .cd-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .cd-num {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1;
+    min-width: 48px;
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .cd-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--neutral-500);
+  }
+
+  .cd-sep {
+    font-size: 22px;
+    color: var(--neutral-500);
+    padding-bottom: 16px;
+  }
+
+  .cta-form {
+    max-width: 460px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(0,196,98,0.25);
+    border-radius: 999px;
+    padding: 6px 6px 6px 20px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .cta-form:focus-within {
+    border-color: var(--green-electric);
+    box-shadow: 0 0 0 4px rgba(0,196,98,0.1);
+  }
+
+  .cta-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: var(--ui);
+    font-size: 14px;
+    color: var(--white);
+    min-width: 0;
+  }
+
+  .cta-input::placeholder { color: var(--neutral-500); }
+
+  .cta-input:-webkit-autofill,
+  .cta-input:-webkit-autofill:hover,
+  .cta-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--white);
+    -webkit-box-shadow: 0 0 0 1000px rgba(10,22,40,0) inset;
+    transition: background-color 5000s ease-in-out 0s;
+    font-family: var(--ui);
+    font-size: 14px;
+  }
+
+  .cta-btn {
+    flex-shrink: 0;
+    padding: 11px 24px;
+    border-radius: 999px;
+    background: var(--green-electric);
+    color: var(--ink);
+    font-family: var(--ui);
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .cta-btn:hover:not(:disabled) {
+    background: #1fd970;
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(0,196,98,0.4);
+  }
+
+  .cta-guarantee {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--neutral-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .guarantee-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--neutral-500);
+    flex-shrink: 0;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-wordmark {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+
+  .footer-tagline {
+    font-size: 12px;
+    color: var(--neutral-500);
+    margin-top: 4px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .footer-link {
+    font-size: 12px;
+    color: var(--neutral-500);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-link:hover { color: var(--white); }
+
+  .footer-right {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--neutral-500);
+    letter-spacing: 1px;
+    text-align: right;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  /* Error / info toast under forms */
+  .form-toast {
+    margin-top: 12px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeInUp 0.3s ease both;
+  }
+
+  .form-toast--error {
+    background: rgba(220,38,38,0.12);
+    border: 1px solid rgba(220,38,38,0.3);
+    color: #f87171;
+  }
+
+  .form-toast--info {
+    background: rgba(0,196,98,0.1);
+    border: 1px solid rgba(0,196,98,0.25);
+    color: var(--green-electric);
+  }
+
+  /* Autofill error border on form wrapper */
+  .waitlist-form.has-error,
+  .cta-form.has-error {
+    border-color: rgba(220,38,38,0.5);
+    box-shadow: 0 0 0 4px rgba(220,38,38,0.1);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--ink); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,196,98,0.3); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    nav .nav-cta .nav-link { display: none; }
+    .section-inner { padding: 0 20px; }
+    .hero { padding: 120px 20px 60px; }
+    .hero-headline { letter-spacing: -2px; }
+    .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+    .belief-pillars { grid-template-columns: 1fr; }
+    .how-steps { grid-template-columns: 1fr; }
+    .mock-grid { grid-template-columns: repeat(2, 1fr); }
+    .who-cards { grid-template-columns: 1fr; }
+    .testimony-grid { grid-template-columns: 1fr; }
+    .preview-header { flex-direction: column; align-items: flex-start; }
+    .cta-box { padding: 40px 24px; }
+    .proof-strip { gap: 24px; padding: 24px; }
+    .waitlist-form,
+    .cta-form {
+      flex-direction: column;
+      border-radius: 20px;
+      padding: 12px;
+      gap: 10px;
+    }
+    .waitlist-btn,
+    .cta-btn {
+      width: 100%;
+      text-align: center;
+    }
+    .waitlist-meta { flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .cta-countdown { gap: 4px; }
+    .cd-num { font-size: 22px; min-width: 40px; padding: 6px 8px; }
+    .cd-sep { font-size: 18px; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .footer-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <div class="nav-logo">
+    <svg class="z-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="9" fill="#006B3C"/>
+      <path d="M9 11h18l-12 14h12" stroke="#00C462" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="nav-wordmark">Zana</div>
+      <div class="nav-tag">Coming Soon</div>
+    </div>
+  </div>
+  <div class="nav-cta">
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+    <a href="#cta" class="btn-pill btn-primary" style="font-size:13px;padding:9px 20px;">Join Waitlist</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="live-dot"></span>
+    Rwanda's First Logistics Operating System
+  </div>
+
+  <h1 class="hero-headline">
+    Logistics, <em>finally</em><br>intelligent.
+  </h1>
+  <div class="hero-sub-headline">Built for Kigali. Built for Africa.</div>
+
+  <p class="hero-body">
+    Every package lost, every rider untraceable, every delivery status unknown —
+    <strong>Zana is the platform that ends that.</strong>
+    Real-time GPS. Full dispatch control. Zero guesswork.
+  </p>
+
+  <div class="waitlist-wrap" id="hero-waitlist">
+    <div class="waitlist-form" id="wForm1">
+      <input class="waitlist-input" type="email" placeholder="your@email.com" id="wEmail1" autocomplete="email">
+      <button class="waitlist-btn" onclick="joinWaitlist('wEmail1','hero-waitlist')">Get Early Access →</button>
+    </div>
+    <div class="success-state" id="wSuccess1">
+      <div class="success-icon">✓</div>
+      <div style="font-size:16px;font-weight:600;color:var(--white);">You're on the list!</div>
+      <div class="success-num" id="wNum1"></div>
+      <div style="font-size:13px;color:var(--neutral-400);text-align:center;">We'll notify you the moment Zana opens.<br>Share and move up the queue.</div>
+    </div>
+    <div class="waitlist-meta">
+      <span>
+        <span class="waitlist-count" id="wCount">847</span> people already waiting
+      </span>
+      <span class="guarantee-dot"></span>
+      <span>No spam, ever</span>
+      <span class="guarantee-dot"></span>
+      <span>Free to join</span>
+    </div>
+  </div>
+</section>
+
+<div class="proof-strip reveal">
+  <div class="proof-item">
+    <div class="proof-number">847+</div>
+    <div class="proof-label">On Waitlist</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <div class="proof-number">~50%</div>
+    <div class="proof-label">Daily Op Margin</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <div class="proof-number">Q2 '26</div>
+    <div class="proof-label">Launch Target</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <div class="proof-number">100%</div>
+    <div class="proof-label">Electric Fleet</div>
+  </div>
+</div>
+
+<section class="section-problem">
+  <div class="section-inner">
+    <div class="problem-grid">
+      <div class="problem-left reveal">
+        <div class="section-eyebrow">The problem</div>
+        <h2>Kigali moves fast.<br><em>Logistics doesn't.</em></h2>
+        <p>Rwanda's economy is accelerating. E-commerce is growing 30%+ annually. Yet the delivery infrastructure hasn't caught up — it's fragmented, opaque, and impossible to scale.</p>
+        <p>Businesses rely on WhatsApp, phone calls, and guesswork to manage deliveries that should be automated, visible, and predictable.</p>
+      </div>
+      <div class="problem-cards reveal">
+        <div class="problem-card">
+          <div class="problem-icon">📍</div>
+          <div>
+            <h4>Zero real-time visibility</h4>
+            <p>Customers have no idea where their package is. Businesses can't track their riders. Every delivery is a black box.</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📱</div>
+          <div>
+            <h4>WhatsApp is not a dispatch system</h4>
+            <p>Coordinating 10+ riders across Kigali via messaging apps is chaos. Orders get lost. Accountability disappears.</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📊</div>
+          <div>
+            <h4>No data, no decisions</h4>
+            <p>Business owners can't see their delivery performance, rider efficiency, or revenue trends. Flying blind is expensive.</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">⛽</div>
+          <div>
+            <h4>Fossil fuel dependency</h4>
+            <p>Petrol-powered delivery fleets face volatile fuel costs and growing environmental pressure in a green-focused Rwanda.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-belief">
+  <div class="belief-bg"></div>
+  <div class="section-inner">
+    <div class="belief-tag">Our belief</div>
+    <h2 class="belief-headline reveal">
+      African logistics deserves<br>the same <em>intelligence</em><br>as any world-class city.
+    </h2>
+    <p class="belief-body reveal">
+      We believe every business owner in Kigali — every restaurant, every pharmacy, every e-commerce store — deserves technology that works as hard as they do. Not eventually. Now.
+    </p>
+
+    <div class="belief-pillars reveal">
+      <div class="pillar">
+        <div class="pillar-number">01</div>
+        <h3>Visibility</h3>
+        <p>Every rider, every package, every second — visible in real time. No more guessing. No more calling.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-number">02</div>
+        <h3>Intelligence</h3>
+        <p>Smart dispatch routing, performance analytics, and data that makes you a better operator — automatically.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-number">03</div>
+        <h3>Sustainability</h3>
+        <p>100% electric fleet. Zero emissions. Lower operating cost. Aligned with Rwanda's green vision for 2050.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-preview">
+  <div class="section-inner">
+    <div class="preview-header reveal">
+      <div>
+        <div class="section-eyebrow">The platform</div>
+        <h2>One screen.<br>Full <em>command</em>.</h2>
+      </div>
+      <p>The Zana LOS gives you dispatch, tracking, analytics, and rider management — unified in a single, beautiful operating system built for African logistics realities.</p>
+    </div>
+
+    <div class="app-showcase reveal">
+      <div class="mock-dashboard">
+        <div class="mock-topbar">
+          <div class="mock-logo-sm">
+            <svg width="20" height="20" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="9" fill="#006B3C"/><path d="M9 11h18l-12 14h12" stroke="#00C462" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Zana Operations
+          </div>
+          <div class="mock-status">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--green-electric);animation:pulse 1.8s infinite;display:inline-block;"></span>
+            12 Riders Active
+          </div>
+        </div>
+
+        <div class="mock-grid">
+          <div class="mock-kpi">
+            <div class="mock-kpi-label">Deliveries Today</div>
+            <div class="mock-kpi-value green">247</div>
+          </div>
+          <div class="mock-kpi">
+            <div class="mock-kpi-label">Revenue (RWF)</div>
+            <div class="mock-kpi-value">618,000</div>
+          </div>
+          <div class="mock-kpi">
+            <div class="mock-kpi-label">Avg. Delivery Time</div>
+            <div class="mock-kpi-value">22<span style="font-size:14px;color:var(--neutral-500);"> min</span></div>
+          </div>
+          <div class="mock-kpi">
+            <div class="mock-kpi-label">On-Time Rate</div>
+            <div class="mock-kpi-value green">94%</div>
+          </div>
+        </div>
+
+        <div class="mock-map">
+          <div class="mock-map-grid"></div>
+          <div style="position:relative;width:100%;height:100%;">
+            <div class="map-ping" style="top:35%;left:28%;background:#00C462;animation-delay:0s;"></div>
+            <div class="map-ping" style="top:55%;left:52%;animation-delay:0.4s;"></div>
+            <div class="map-ping" style="top:25%;left:65%;animation-delay:0.8s;"></div>
+            <div class="map-ping" style="top:70%;left:38%;animation-delay:1.2s;"></div>
+            <div class="map-ping" style="top:45%;left:75%;animation-delay:0.6s;"></div>
+            <div class="map-ping" style="top:60%;left:20%;animation-delay:1.5s;"></div>
+            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.3;" viewBox="0 0 400 220" preserveAspectRatio="none">
+              <path d="M112,77 Q200,100 208,121" stroke="#00C462" stroke-width="1.5" fill="none" stroke-dasharray="4,4"/>
+              <path d="M260,55 Q300,90 300,99" stroke="#00C462" stroke-width="1.5" fill="none" stroke-dasharray="4,4"/>
+              <path d="M152,154 Q180,130 208,121" stroke="#00C462" stroke-width="1.5" fill="none" stroke-dasharray="4,4"/>
+            </svg>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:10px;color:var(--neutral-500);letter-spacing:1px;text-transform:uppercase;background:rgba(10,22,40,0.8);padding:5px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);">Kigali Live Map</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-blur-overlay">
+        <div class="unlock-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          Full preview for waitlist members
+        </div>
+        <div class="unlock-text">See the complete platform<br>when you join the waitlist</div>
+        <a href="#cta" class="btn-pill btn-primary">Unlock Full Preview →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-how" id="how">
+  <div class="section-inner">
+    <div class="how-header reveal">
+      <div class="section-eyebrow">How it works</div>
+      <h2>Operational in 3 steps.</h2>
+      <p>From sign-up to full fleet operations in under a week. No technical expertise required.</p>
+    </div>
+
+    <div class="how-steps reveal">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🏍</div>
+        <h3>Onboard your fleet</h3>
+        <p>Add your riders, assign GPS-tracked electric motorcycles, and define your delivery zones in Kigali. Takes minutes, not days.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <div class="step-icon">📦</div>
+        <h3>Accept & dispatch</h3>
+        <p>Receive delivery requests from your business clients. Zana auto-routes to the nearest available rider and notifies the customer — zero manual coordination.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <div class="step-icon">📈</div>
+        <h3>Track & optimize</h3>
+        <p>Your live dashboard shows every delivery, every rider, and every franc earned — with AI-powered recommendations to grow your operation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-who">
+  <div class="section-inner">
+    <div class="who-header reveal">
+      <div class="section-eyebrow">Built for</div>
+      <h2>Who Zana is built for.</h2>
+      <p>Whether you're scaling a business or building a delivery fleet from scratch — Zana is the operating system underneath your growth.</p>
+    </div>
+
+    <div class="who-cards">
+      <div class="who-card reveal">
+        <span class="who-avatar">🏪</span>
+        <h3>Businesses & Retailers</h3>
+        <p>Restaurants, pharmacies, grocery stores, and e-commerce brands who need reliable same-day delivery without managing their own fleet.</p>
+        <div class="who-tag">Early access priority</div>
+      </div>
+      <div class="who-card reveal" style="transition-delay:0.1s">
+        <span class="who-avatar">🏍</span>
+        <h3>Fleet Operators</h3>
+        <p>Entrepreneurs and companies with existing motorcycle fleets looking to digitize operations, reduce idle time, and maximize revenue per rider.</p>
+        <div class="who-tag">Fleet partner program</div>
+      </div>
+      <div class="who-card reveal" style="transition-delay:0.2s">
+        <span class="who-avatar">📦</span>
+        <h3>Logistics Managers</h3>
+        <p>Operations leads at mid-to-large enterprises who need a command center for Kigali deliveries with full audit trails and SLA reporting.</p>
+        <div class="who-tag">Enterprise tier</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-faq" id="faq">
+  <div class="section-inner">
+    <div class="faq-wrap">
+      <div class="faq-header reveal">
+        <div class="section-eyebrow">Questions</div>
+        <h2>Frequently asked.</h2>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          When does Zana launch?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">We're targeting a <strong>Q2 2026 launch</strong> in Kigali, with a phased rollout starting with priority waitlist members. Early access users get onboarded first — weeks before the public launch — along with dedicated support and founder pricing locked in permanently.</div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What does it cost? Is there a free tier?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Zana will offer tiered SaaS pricing in RWF — designed to be accessible for Kigali SMEs through enterprise fleet operators. <strong>Waitlist members get early-bird pricing</strong> locked in at launch, saving significantly versus standard rates. Full pricing will be released to waitlist members first.</div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Do I need my own motorcycle fleet to use Zana?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">No. Zana operates on two levels: <strong>as a platform</strong> (bring your own fleet and use our software) or <strong>as a full service</strong> (we provide GPS-tracked electric motorcycles and employed riders). You can start immediately as a business client booking deliveries without managing any fleet at all.</div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Why electric motorcycles?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Electric motorcycles (Spiro and Ampersand Alpha) have <strong>~50% lower daily operating costs</strong> than petrol bikes — making every delivery more profitable for us and more affordable for you. They also align with Rwanda's green economy vision and eliminate fuel price volatility from our cost model entirely.</div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Will Zana expand beyond Kigali?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Absolutely. Zana is built to scale across Rwanda first, then West Africa — with <strong>Senegal as our first international market</strong>. The platform is architected as a multi-city Logistics Operating System from day one, not a single-market tool bolted together.</div>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What does joining the waitlist get me?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Joining the waitlist gives you: <strong>priority early access</strong> before public launch, <strong>founder pricing locked in</strong> at a significant discount, <strong>access to the full product preview</strong> (the blurred screenshots on this page — unlocked for waitlist members), early onboarding support, and a chance to shape Zana's features through our beta feedback program.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-cta" id="cta">
+  <div class="cta-glow"></div>
+  <div class="section-inner">
+    <div class="cta-box reveal">
+      <div class="cta-eyebrow">Early access · Limited spots</div>
+      <h2 class="cta-headline">
+        Be the first to<br>run on <em>Zana</em>.
+      </h2>
+      <p class="cta-sub">Join 847+ businesses and fleet operators already on the waitlist.<br>Founder pricing. First access. Zero risk.</p>
+
+      <div class="cta-countdown">
+        <div class="cd-block">
+          <div class="cd-num" id="cd-days">00</div>
+          <div class="cd-label">Days</div>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="cd-hours">00</div>
+          <div class="cd-label">Hours</div>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="cd-mins">00</div>
+          <div class="cd-label">Minutes</div>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-num" id="cd-secs">00</div>
+          <div class="cd-label">Seconds</div>
+        </div>
+      </div>
+
+      <div class="cta-form" id="cta-waitlist" style="max-width:460px;margin:0 auto;">
+        <input class="cta-input" type="email" placeholder="your@email.com" id="ctaEmail" autocomplete="email">
+        <button class="cta-btn" onclick="joinWaitlist('ctaEmail','cta-waitlist-wrap')">Secure My Spot →</button>
+      </div>
+      <div id="cta-waitlist-wrap"></div>
+
+      <div class="cta-guarantee">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--green-electric)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        &nbsp;No credit card &nbsp;
+        <span class="guarantee-dot"></span>
+        &nbsp;No commitment &nbsp;
+        <span class="guarantee-dot"></span>
+        &nbsp;Unsubscribe anytime
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="9" fill="#006B3C"/><path d="M9 11h18l-12 14h12" stroke="#00C462" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div>
+      <div class="footer-wordmark">Zana</div>
+      <div class="footer-tagline">A Drwintech LTD product · Kigali, Rwanda</div>
+    </div>
+  </div>
+
+  <div class="footer-links">
+    <a href="#" class="footer-link">Privacy Policy</a>
+    <a href="#" class="footer-link">Terms of Use</a>
+    <a href="mailto:hello@drwintech.com" class="footer-link">hello@drwintech.com</a>
+    <a href="#" class="footer-link">Press Kit</a>
+  </div>
+
+  <div class="footer-right">
+    <div style="color:var(--neutral-400);font-size:11px;">© 2026 Drwintech LTD</div>
+    <div style="margin-top:4px;color:var(--green-electric);opacity:0.6;">RDB Registered · Kigali</div>
+  </div>
+</footer>
+
+<script>
+// ── SUPABASE CLIENT (safe init — page works even if CDN fails) ──
+var sb = null;
+var SB_URL = '__SB_URL__';
+var SB_KEY = '__SB_KEY__';
+
+function initSupabase() {
+  try {
+    if (!sb && window.supabase && window.supabase.createClient) {
+      sb = window.supabase.createClient(SB_URL, SB_KEY);
+      loadWaitlistCount();
+    }
+  } catch (_) { /* SDK not available */ }
+}
+
+// Try now (if script loaded synchronously) or retry when async script loads
+initSupabase();
+if (!sb) {
+  var sdkScript = document.querySelector('script[src*="supabase"]');
+  if (sdkScript) sdkScript.addEventListener('load', initSupabase);
+}
+
+// ── WAITLIST COUNTER ─────────────────────────────────
+var baseCount = 847;
+var countEl = document.getElementById('wCount');
+
+// Load real count from Supabase on page load
+async function loadWaitlistCount() {
+  if (!sb) return;
+  try {
+    var result = await sb
+      .from('waitlist')
+      .select('*', { count: 'exact', head: true });
+    if (!result.error && result.count !== null) {
+      baseCount = 847 + result.count;
+      if (countEl) countEl.textContent = baseCount.toLocaleString();
+    }
+  } catch (_) { /* fallback to static count */ }
+}
+
+var signupCount = baseCount;
+
+// ── RATE LIMITING (client-side) ──────────────────────
+var lastSubmitTime = 0;
+var SUBMIT_COOLDOWN = 5000; // 5 seconds between submissions
+
+// ── WAITLIST SUBMISSION ──────────────────────────────
+async function joinWaitlist(inputId, wrapId) {
+  var now = Date.now();
+  if (now - lastSubmitTime < SUBMIT_COOLDOWN) return;
+
+  var input = document.getElementById(inputId);
+  var email = input ? input.value.trim().toLowerCase() : '';
+  var formEl = input ? input.closest('.waitlist-form, .cta-form') : null;
+
+  // Clear previous errors
+  clearFormError(formEl);
+
+  if (!email) {
+    showFormError(formEl, 'Please enter your email address.');
+    shakeForm(formEl);
+    return;
+  }
+
+  if (email.length > 320 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFormError(formEl, 'Please enter a valid email address.');
+    shakeForm(formEl);
+    return;
+  }
+
+  lastSubmitTime = now;
+
+  // Disable button while saving
+  var btn = input.nextElementSibling;
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+  // Insert into Supabase — position is auto-generated by DB sequence
+  var position = null;
+
+  if (!sb) {
+    resetBtn(btn, formEl);
+    showFormError(formEl, 'Service temporarily unavailable. Please try again later.');
+    return;
+  }
+
+  try {
+    var result = await sb
+      .from('waitlist')
+      .insert({ email: email, source: 'landing' })
+      .select('position')
+      .single();
+
+    if (result.error) {
+      if (result.error.code === '23505') {
+        resetBtn(btn, formEl);
+        showFormError(formEl, 'This email is already on the waitlist!', 'info');
+        return;
+      }
+      throw result.error;
+    }
+
+    position = result.data.position;
+    baseCount++;
+    if (countEl) countEl.textContent = baseCount.toLocaleString();
+  } catch (err) {
+    console.error('Waitlist insert failed:', err);
+    resetBtn(btn, formEl);
+    showFormError(formEl, 'Something went wrong. Please try again.');
+    return;
+  }
+
+  showSuccess(inputId, wrapId, position);
+}
+
+function showSuccess(inputId, wrapId, position) {
+  var posText = '#' + String(Number(position)) + ' on the waitlist';
+
+  if (inputId === 'wEmail1') {
+    var form = document.getElementById('wForm1');
+    var success = document.getElementById('wSuccess1');
+    var num = document.getElementById('wNum1');
+    if (form) form.style.display = 'none';
+    if (num) num.textContent = posText;
+    if (success) success.style.display = 'flex';
+  } else {
+    var ctaWrap = document.getElementById(wrapId);
+    var form2 = document.getElementById('cta-waitlist');
+    if (form2) form2.style.display = 'none';
+    if (ctaWrap) {
+      // Build DOM elements safely — no innerHTML with dynamic data
+      var box = document.createElement('div');
+      box.style.cssText = 'margin-top:20px;padding:24px 32px;background:rgba(0,107,60,0.12);border:1px solid rgba(0,196,98,0.3);border-radius:16px;text-align:center;';
+
+      var icon = document.createElement('div');
+      icon.style.cssText = 'font-size:28px;margin-bottom:8px;';
+      icon.textContent = '\u2713';
+
+      var title = document.createElement('div');
+      title.style.cssText = 'font-size:16px;font-weight:600;color:var(--white);margin-bottom:4px;';
+      title.textContent = 'You\'re on the list!';
+
+      var posEl = document.createElement('div');
+      posEl.style.cssText = 'font-family:var(--mono);font-size:11px;color:var(--green-electric);letter-spacing:2px;text-transform:uppercase;';
+      posEl.textContent = posText;
+
+      var sub = document.createElement('div');
+      sub.style.cssText = 'font-size:13px;color:var(--neutral-400);margin-top:10px;';
+      sub.textContent = 'Check your inbox. We\'ll be in touch soon.';
+
+      box.appendChild(icon);
+      box.appendChild(title);
+      box.appendChild(posEl);
+      box.appendChild(sub);
+
+      ctaWrap.textContent = '';
+      ctaWrap.appendChild(box);
+    }
+  }
+}
+
+function shakeForm(formEl) {
+  if (!formEl) return;
+  formEl.classList.add('has-error');
+  formEl.style.animation = 'shake 0.4s';
+  setTimeout(function() {
+    formEl.style.animation = '';
+    formEl.classList.remove('has-error');
+  }, 2000);
+}
+
+function showFormError(formEl, msg, type) {
+  if (!formEl) return;
+  clearFormError(formEl);
+  var toast = document.createElement('div');
+  toast.className = 'form-toast form-toast--' + (type || 'error');
+  toast.textContent = msg;
+  formEl.parentNode.insertBefore(toast, formEl.nextSibling);
+  // Auto-dismiss after 5s
+  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 5000);
+}
+
+function clearFormError(formEl) {
+  if (!formEl || !formEl.parentNode) return;
+  var existing = formEl.parentNode.querySelector('.form-toast');
+  if (existing) existing.remove();
+}
+
+function resetBtn(btn, formEl) {
+  if (!btn) return;
+  btn.disabled = false;
+  btn.textContent = (formEl && formEl.classList.contains('cta-form'))
+    ? 'Secure My Spot \u2192'
+    : 'Get Early Access \u2192';
+}
+
+const launchDate = new Date('2026-06-01T08:00:00+02:00');
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = launchDate - now;
+
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '00';
+    document.getElementById('cd-hours').textContent = '00';
+    document.getElementById('cd-mins').textContent = '00';
+    document.getElementById('cd-secs').textContent = '00';
+    return;
+  }
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const secs = Math.floor((diff % (1000*60)) / 1000);
+
+  document.getElementById('cd-days').textContent = String(days).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+  document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
+  if (!isOpen) item.classList.add('open');
+}
+
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+revealEls.forEach(function(el) { observer.observe(el); });
+
+window.addEventListener('scroll', function() {
+  var nav = document.getElementById('mainNav');
+  if (window.scrollY > 60) {
+    nav.style.padding = '12px 48px';
+  } else {
+    nav.style.padding = '20px 48px';
+  }
+});
+
+document.getElementById('wEmail1').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') joinWaitlist('wEmail1','hero-waitlist');
+});
+document.getElementById('ctaEmail').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') joinWaitlist('ctaEmail','cta-waitlist-wrap');
+});
+
+document.querySelectorAll('.map-ping').forEach(function(ping, i) {
+  ping.style.animationDelay = (i * 0.4) + 's';
+});
+</script>
+
+</body>
+</html>
