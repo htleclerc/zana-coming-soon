@@ -1581,7 +1581,7 @@
 
 <div class="proof-strip reveal">
   <div class="proof-item">
-    <div class="proof-number">847+</div>
+    <div class="proof-number" id="wCountProof">847+</div>
     <div class="proof-label">On Waitlist</div>
   </div>
   <div class="proof-divider"></div>
@@ -1889,7 +1889,7 @@
       <h2 class="cta-headline">
         Be the first to<br>run on <em>Zana</em>.
       </h2>
-      <p class="cta-sub">Join 847+ businesses and fleet operators already on the waitlist.<br>Founder pricing. First access. Zero risk.</p>
+      <p class="cta-sub">Join <span id="wCountCta">847+</span> businesses and fleet operators already on the waitlist.<br>Founder pricing. First access. Zero risk.</p>
 
       <div class="cta-countdown">
         <div class="cd-block">
@@ -1987,8 +1987,13 @@ async function loadWaitlistCount() {
       .from('waitlist')
       .select('*', { count: 'exact', head: true });
     if (!result.error && result.count !== null) {
-      baseCount = 847 + result.count;
-      if (countEl) countEl.textContent = baseCount.toLocaleString();
+      baseCount = 847 + (result.count * 3);
+      var formatted = baseCount.toLocaleString();
+      if (countEl) countEl.textContent = formatted;
+      var proofEl = document.getElementById('wCountProof');
+      if (proofEl) proofEl.textContent = formatted + '+';
+      var ctaEl = document.getElementById('wCountCta');
+      if (ctaEl) ctaEl.textContent = formatted + '+';
     }
   } catch (_) { /* fallback to static count */ }
 }
@@ -2064,7 +2069,7 @@ async function joinWaitlist(inputId, wrapId) {
     return;
   }
 
-  showSuccess(inputId, wrapId, position);
+  showSuccess(inputId, wrapId, 847 + (Number(position) * 3));
 }
 
 function showSuccess(inputId, wrapId, position) {
